@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public class Entry : MonoBehaviour
@@ -31,6 +32,8 @@ public class Entry : MonoBehaviour
     public int facingDir = 1;
     protected bool facingRight = true;
 
+    public bool isBusy;
+
     protected virtual void Awake()
     {
 
@@ -52,6 +55,16 @@ public class Entry : MonoBehaviour
     {
         rb.linearVelocity = new Vector2(_xVelocity, _yVelocity);
         FlipController(_xVelocity);
+    }
+    public virtual void SetVelocityZero()
+    {
+        SetVelocity(0, 0);
+    }
+    protected IEnumerator BusyFor(float _seconds)
+    {
+        isBusy = true;
+        yield return new WaitForSeconds(_seconds);
+        isBusy = false;
     }
 
     #region Flip

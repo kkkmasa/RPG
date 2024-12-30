@@ -9,7 +9,7 @@ public class Player : Entry
     public Vector2[] attackMovement;
 
     [HideInInspector]
-    public bool isBusy;
+    
 
     #region State
 
@@ -57,14 +57,7 @@ public class Player : Entry
         CheckForDashInput();
     }
 
-    IEnumerator BusyFor(float _seconds)
-    {
-        isBusy = true;
-        yield return new WaitForSeconds(_seconds);
-        isBusy = false;
-    }
 
-    public void SetVelocityZero() => rb.linearVelocity = new Vector2(0, 0);
 
     private void CheckForDashInput()
     {

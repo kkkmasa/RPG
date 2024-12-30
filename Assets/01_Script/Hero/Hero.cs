@@ -10,7 +10,6 @@ public class Hero : Entry
     public Vector2[] moveAttack;
 
     [HideInInspector]
-    public bool isBusy;
     HeroStateMachine stateMachine;
 
     public HeroIdleState idleState { get; private set; }
@@ -52,12 +51,7 @@ public class Hero : Entry
         CheckForDashInput();
     }
 
-    IEnumerator BusyFor(float _seconds)
-    {
-        isBusy = true;
-        yield return new WaitForSeconds(_seconds);
-        isBusy = false;
-    }
+
 
     private void CheckForDashInput()
     {
@@ -80,9 +74,6 @@ public class Hero : Entry
 
     public void AnimationFinishTrigger() => this.stateMachine.currentState.AnimationFinishTrigger();
 
-    public void SetVelocityZero()
-    {
-        SetVelocity(0, 0);
-    }
+
 
 }
