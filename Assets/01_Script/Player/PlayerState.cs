@@ -43,7 +43,7 @@ public class PlayerState
         this.triggerCalled = true;
     }
     public void Log() {
-        Debug.Log(this.boolAnimName);
+        // Debug.Log(this.boolAnimName);
     }
 
 }

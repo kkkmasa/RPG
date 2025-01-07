@@ -5,10 +5,14 @@ using UnityEngine.Playables;
 
 public class Player : Entry
 {
+
+    [Header("Move Info")]
+    public float moveSpeed = 12f;
+    public float jumpForce = 12;
+
     [Header("Attack")]
     public Vector2[] attackMovement;
 
-    [HideInInspector]
     
 
     #region State

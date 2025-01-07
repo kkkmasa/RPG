@@ -6,6 +6,10 @@ using UnityEngine;
 public class Hero : Entry
 {
 
+    [Header("Move Info")]
+    public float moveSpeed = 12f;
+    public float jumpForce = 12;
+
     [Header("Attack Info")]
     public Vector2[] moveAttack;
 
