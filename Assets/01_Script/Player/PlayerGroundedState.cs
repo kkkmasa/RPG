@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class PlayerGroundedState : PlayerState
@@ -14,6 +15,8 @@ public class PlayerGroundedState : PlayerState
     {
         base.Update();
 
+  
+
         if (!player.IsGroundDetected())
             this.stateMachine.ChangeState(player.airState);
 
@@ -22,6 +25,9 @@ public class PlayerGroundedState : PlayerState
 
         if (Input.GetKeyDown(KeyCode.Mouse0))
             this.stateMachine.ChangeState(player.primaryAttack);
+
+        if (Input.GetKeyDown(KeyCode.Mouse1))
+            this.stateMachine.ChangeState(player.aimSwordState);
 
     }
     public override void Exit()

@@ -6,6 +6,10 @@ using UnityEngine;
 public class Hero : Entry
 {
 
+    [Header("Move Info")]
+    public float moveSpeed = 12f;
+    public float jumpForce = 12;
+
     [Header("Attack Info")]
     public Vector2[] moveAttack;
 
@@ -62,7 +66,7 @@ public class Hero : Entry
 
         if (Input.GetKeyDown(KeyCode.LeftShift) && dashUsageTimer < 0)
         {
-            dashUsageTimer = dashCooldown;
+            // dashUsageTimer = dashCooldown;
             this.dashDir = Input.GetAxisRaw("Horizontal");
 
             if (dashDir == 0)

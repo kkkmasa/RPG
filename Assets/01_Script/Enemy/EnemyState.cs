@@ -1,30 +1,37 @@
+using UnityEditor.Callbacks;
 using UnityEngine;
 
 public class EnemyState
 {
-    protected Enemy enemy;
+    protected Enemy enemyBase;
     protected EnemyStateMachine stateMachine;
     protected string boolAnimName;
     protected bool triggerCalled;
     protected float stateTimer;
+    protected Rigidbody2D rb;
 
-    public EnemyState(Enemy _enemy, EnemyStateMachine _stateMachine, string _boolAnimName) {
-        this.enemy = _enemy;
+    public EnemyState(Enemy _enemyBase, EnemyStateMachine _stateMachine, string _boolAnimName) {
+        this.enemyBase = _enemyBase;
         this.stateMachine = _stateMachine;
         this.boolAnimName = _boolAnimName;
     }
 
     public virtual void Enter() {
         triggerCalled = false;
-        enemy.anim.SetBool(boolAnimName, true);
+        enemyBase.anim.SetBool(boolAnimName, true);
+        this.rb = enemyBase.rb;
         
     }
     public virtual void Update() {
         stateTimer -= Time.deltaTime;
     }
     public virtual void Exit() {
-        enemy.anim.SetBool(boolAnimName, false);
+        enemyBase.anim.SetBool(boolAnimName, false);
 
+    }
+
+    public virtual void AnimationFinishTrigger() {
+        this.triggerCalled = true;
     }
 
 }

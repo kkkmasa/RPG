@@ -12,6 +12,7 @@ public class HeroPrimaryAttackState : HeroState
     public override void Enter()
     {
         base.Enter();
+        xInput = 0;
         
         if (combCounter > 2 || Time.time > latestTime + combWindow) 
             combCounter = 0;

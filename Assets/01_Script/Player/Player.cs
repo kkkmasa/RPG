@@ -5,11 +5,17 @@ using UnityEngine.Playables;
 
 public class Player : Entry
 {
+
+    [Header("Move Info")]
+    public float moveSpeed = 12f;
+    public float jumpForce = 12;
+
     [Header("Attack")]
     public Vector2[] attackMovement;
+    public float counterAttackDuration = .2f;
 
-    [HideInInspector]
-    
+    public SkillManager skill;
+
 
     #region State
 
@@ -23,6 +29,9 @@ public class Player : Entry
     public PlayerDashState dashState { get; private set; }
     public PlayerWallJumpState wallJumpState { get; private set; }
     public PlayerPrimaryAttackState primaryAttack { get; private set; }
+    public PlayerCounterAttackState counterAttackState { get; private set; }
+    public PlayerAimSwordState aimSwordState { get; private set; }
+    public PlayerCatchSwordState catchSwordState { get; private set; }
 
 
     #endregion
@@ -40,6 +49,12 @@ public class Player : Entry
         this.wallSliderState = new PlayerWallSliderState(this, this.stateMachine, "WallSlider");
         this.wallJumpState = new PlayerWallJumpState(this, this.stateMachine, "Jump");
         this.primaryAttack = new PlayerPrimaryAttackState(this, this.stateMachine, "Attack");
+        this.counterAttackState = new PlayerCounterAttackState(this, this.stateMachine, "CounterAttack");
+
+        this.aimSwordState = new PlayerAimSwordState(this, this.stateMachine, "AimSword");
+        this.catchSwordState = new PlayerCatchSwordState(this, this.stateMachine, "CatchSword");
+
+        this.skill = SkillManager.instance;
     }
 
 
@@ -63,12 +78,10 @@ public class Player : Entry
     {
         if (IsWallDetected())
             return;
-        
-        dashUsageTimer -= Time.deltaTime;
 
-        if (Input.GetKeyDown(KeyCode.LeftShift) && dashUsageTimer < 0)
+
+        if (Input.GetKeyDown(KeyCode.LeftShift) && SkillManager.instance.dash.CanUseSkill())
         {
-            dashUsageTimer = dashCooldown;
             this.dashDir = Input.GetAxisRaw("Horizontal");
 
             if (dashDir == 0)
