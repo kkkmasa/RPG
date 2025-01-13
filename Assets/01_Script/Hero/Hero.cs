@@ -66,7 +66,7 @@ public class Hero : Entry
 
         if (Input.GetKeyDown(KeyCode.LeftShift) && dashUsageTimer < 0)
         {
-            dashUsageTimer = dashCooldown;
+            // dashUsageTimer = dashCooldown;
             this.dashDir = Input.GetAxisRaw("Horizontal");
 
             if (dashDir == 0)

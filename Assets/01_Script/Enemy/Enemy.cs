@@ -60,17 +60,21 @@ public class Enemy : Entry
 
 
     }
-    public virtual void OpenCounterAttackWindow() {
+    public virtual void OpenCounterAttackWindow()
+    {
         canBeStunned = true;
         counterImage.SetActive(true);
     }
-    public virtual void CloseCounterAttackWindow() {
+    public virtual void CloseCounterAttackWindow()
+    {
         canBeStunned = false;
         counterImage.SetActive(false);
     }
 
-    protected virtual bool CanBeStunned() {
-        if (canBeStunned) {
+    public virtual bool CanBeStunned()
+    {
+        if (canBeStunned)
+        {
             CloseCounterAttackWindow();
             return true;
         }

@@ -16,7 +16,7 @@ public class Entry : MonoBehaviour
     [SerializeField] protected bool isKnocked;
 
     [Header("Dash Info")]
-    [SerializeField] protected float dashCooldown;
+ 
     protected float dashUsageTimer;
     public float dashDuration = 1f;
     public float dashSpeed = 15;
