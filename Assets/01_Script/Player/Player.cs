@@ -9,12 +9,14 @@ public class Player : Entry
     [Header("Move Info")]
     public float moveSpeed = 12f;
     public float jumpForce = 12;
+    public float swordRetrunImpact = 10;
 
     [Header("Attack")]
     public Vector2[] attackMovement;
     public float counterAttackDuration = .2f;
 
     public SkillManager skill;
+    public GameObject sword { get; private set; }
 
 
     #region State
@@ -72,6 +74,15 @@ public class Player : Entry
         CheckForDashInput();
     }
 
+    public void AssignTheSword(GameObject _newSword)
+    {
+        this.sword = _newSword;
+    }
+    public void CatchTheSword()
+    {
+        this.stateMachine.ChangeState(this.catchSwordState);
+        Destroy(this.sword);
+    }
 
 
     private void CheckForDashInput()

@@ -20,6 +20,7 @@ public class SkeletonMoveState : SkeletonGroundedState
             enemy.Flip();
             this.stateMachine.ChangeState(enemy.idleState);
         }
+        Debug.Log(enemy.IsGroundDetected());
     }
 
     public override void Exit()
