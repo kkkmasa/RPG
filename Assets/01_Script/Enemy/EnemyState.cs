@@ -27,6 +27,7 @@ public class EnemyState
     }
     public virtual void Exit() {
         enemyBase.anim.SetBool(boolAnimName, false);
+        enemyBase.AssignLastAnimName(boolAnimName);
 
     }
 

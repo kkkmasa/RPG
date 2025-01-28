@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public class Enemy : Entry
@@ -8,6 +9,7 @@ public class Enemy : Entry
 
     [Header("Move Info")]
     public float moveSpeed = 2;
+    float defaultMoveSpeed;
     public float idleTime;
 
     [Header("Stun Info")]
@@ -20,6 +22,7 @@ public class Enemy : Entry
     public float attackDistance;
     public float attackCooldown;
     public float battleTime;
+    public string lastAnimBoolName { get; private set; }
     [HideInInspector] public float lastTimeAttacked;
 
     public EnemyStateMachine stateMachine { get; private set; }
@@ -29,6 +32,7 @@ public class Enemy : Entry
     {
         base.Awake();
         this.stateMachine = new EnemyStateMachine();
+        defaultMoveSpeed = moveSpeed;
     }
 
     protected override void Start()
@@ -37,12 +41,46 @@ public class Enemy : Entry
 
     }
 
+    public override void SlowEntityBy(float _slowPercentage, float _slowDuration)
+    {
+        moveSpeed = moveSpeed * (1 - _slowPercentage);
+        anim.speed = anim.speed * (1 - _slowPercentage);
+
+        Invoke("ReturnDefultSpeed", _slowDuration);
+    }
+    public override void ReturnDefultSpeed()
+    {
+        base.ReturnDefultSpeed();
+        moveSpeed = defaultMoveSpeed;
+    }
+
     // Update is called once per frame
     protected override void Update()
     {
         base.Update();
         this.stateMachine.currentState.Update();
 
+    }
+
+    public virtual void AssignLastAnimName(string _animBoolName) {
+        lastAnimBoolName = _animBoolName;
+    }
+
+    public virtual void FreezeTime(bool _timeFrozen)
+    {
+        if (_timeFrozen) {
+            moveSpeed = 0;
+            anim.speed = 0;
+        } else {
+            moveSpeed = defaultMoveSpeed;
+            anim.speed = 1;
+        }
+    }
+    protected virtual IEnumerator FreezeTimerFor(float _seconds)
+    {
+        FreezeTime(true);
+        yield return new WaitForSeconds(_seconds);
+        FreezeTime(false);
     }
 
     public virtual RaycastHit2D IsPlayerDetected() => Physics2D.Raycast(wallCheck.position, Vector2.right * facingDir, 50, whatIsPlayer);
@@ -60,6 +98,8 @@ public class Enemy : Entry
 
 
     }
+
+    #region Counter Attack
     public virtual void OpenCounterAttackWindow()
     {
         canBeStunned = true;
@@ -70,6 +110,7 @@ public class Enemy : Entry
         canBeStunned = false;
         counterImage.SetActive(false);
     }
+    #endregion
 
     public virtual bool CanBeStunned()
     {

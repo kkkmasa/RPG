@@ -7,6 +7,10 @@ public class Entry : MonoBehaviour
     public Animator anim;
     public Rigidbody2D rb;
     public EntityFX fx { get; private set; }
+    public SpriteRenderer sr;
+    public CharacterStats stats { get; private set; }
+
+    public CapsuleCollider2D cd { get; private set; }
 
     #endregion
 
@@ -16,13 +20,14 @@ public class Entry : MonoBehaviour
     [SerializeField] protected bool isKnocked;
 
     [Header("Dash Info")]
- 
+
     protected float dashUsageTimer;
     public float dashDuration = 1f;
     public float dashSpeed = 15;
     public float dashDir;
+    public float defaultDashSpeed;
 
-
+    public System.Action onFilped;
 
     [Header("Collision info")]
 
@@ -34,7 +39,7 @@ public class Entry : MonoBehaviour
     [SerializeField] protected float wallCheckDistance;
     [SerializeField] protected LayerMask whatIsGround;
 
-    
+
 
     public int facingDir = 1;
     protected bool facingRight = true;
@@ -51,6 +56,18 @@ public class Entry : MonoBehaviour
         this.fx = GetComponent<EntityFX>();
         this.anim = GetComponentInChildren<Animator>();
         this.rb = GetComponent<Rigidbody2D>();
+        this.sr = GetComponentInChildren<SpriteRenderer>();
+        this.stats = GetComponent<CharacterStats>();
+        this.cd = GetComponent<CapsuleCollider2D>();
+    }
+
+    public virtual void SlowEntityBy(float _slowPercentage, float _slowDuration)
+    {
+
+    }
+    public virtual void ReturnDefultSpeed()
+    {
+        anim.speed = 1;
     }
 
     // Update is called once per frame
@@ -69,7 +86,7 @@ public class Entry : MonoBehaviour
     public virtual void SetVelocityZero()
     {
         if (isKnocked) return;
-        
+
         SetVelocity(0, 0);
     }
     protected IEnumerator BusyFor(float _seconds)
@@ -79,12 +96,10 @@ public class Entry : MonoBehaviour
         isBusy = false;
     }
 
-    public virtual void Damage() {
-        fx.StartCoroutine("FlashFX");
-        StartCoroutine(HitKnockback());
-    }
+    public virtual void DamageImpact() =>  StartCoroutine(HitKnockback());
 
-    IEnumerator HitKnockback() {
+    IEnumerator HitKnockback()
+    {
         this.isKnocked = true;
         rb.linearVelocity = new Vector2(knockbackDirection.x * -facingDir, knockbackDirection.y);
 
@@ -100,6 +115,11 @@ public class Entry : MonoBehaviour
         facingRight = !facingRight;
 
         transform.Rotate(0, 180, 0);
+
+        if (onFilped != null)
+        {
+            onFilped();
+        }
     }
 
     public void FlipController(float _x)
@@ -122,4 +142,9 @@ public class Entry : MonoBehaviour
         Gizmos.DrawWireSphere(attackCheck.position, attackCheckRadius);
     }
     #endregion
+
+    public virtual void Die()
+    {
+
+    }
 }

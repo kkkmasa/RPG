@@ -2,6 +2,7 @@ using UnityEngine;
 
 public class Clone_Skill_Controller : MonoBehaviour
 {
+    Player player;
     SpriteRenderer sr;
     Animator anim;
     float colorLossingSpeed;
@@ -9,6 +10,9 @@ public class Clone_Skill_Controller : MonoBehaviour
     [SerializeField] Transform attackCheck;
     [SerializeField] float attackCheckRadius = .8f;
     Transform closestEnemy;
+    bool canDuplicate;
+    int facingDir = 1;
+    float chanceToDuplicate;
 
     void Awake()
     {
@@ -28,15 +32,19 @@ public class Clone_Skill_Controller : MonoBehaviour
                 Destroy(gameObject);
         }
     }
-    public void Setup(Transform _newTransform, float cloneDuration, float _colorLossingSpeed, bool _canAttack)
+    public void Setup(Transform _newTransform, float cloneDuration, float _colorLossingSpeed, bool _canAttack, Vector3 _offset, Transform _closestEnemy, bool _canDuplicate, float _chanceToDuplicate, Player _player)
     {
 
         if (_canAttack)
             this.anim.SetInteger("AttackNumber", Random.Range(1, 3));
 
-        this.transform.position = _newTransform.position;
+        this.transform.position = _newTransform.position + _offset;
         cloneTimer = cloneDuration;
         this.colorLossingSpeed = _colorLossingSpeed;
+        this.closestEnemy = _closestEnemy;
+        this.canDuplicate = _canDuplicate;
+        this.chanceToDuplicate = _chanceToDuplicate;
+        this.player = _player;
 
         FacingClosestTarget();
     }
@@ -52,7 +60,17 @@ public class Clone_Skill_Controller : MonoBehaviour
         {
             if (hit.GetComponent<Enemy>() != null)
             {
-                hit.GetComponent<Enemy>().Damage();
+
+                // hit.GetComponent<Enemy>().DamageEffect();
+                player.stats.DoDamage(hit.GetComponent<CharacterStats>());
+
+                if (canDuplicate)
+                {
+                    if (Random.Range(0, 100) < chanceToDuplicate)
+                    {
+                        SkillManager.instance.clone.CreateClone(hit.transform, new Vector3(.5f * facingDir, 0));
+                    }
+                }
             }
         }
     }
@@ -64,24 +82,13 @@ public class Clone_Skill_Controller : MonoBehaviour
 
     void FacingClosestTarget()
     {
-        Collider2D[] collider2Ds = Physics2D.OverlapCircleAll(transform.position, 25);
-        float closestDistance = Mathf.Infinity;
-        foreach (var hit in collider2Ds)
-        {
-            if (hit.GetComponent<Enemy>() != null)
-            {
-                float distanceToEnemy = Vector2.Distance(transform.position, hit.transform.position);
-                if (distanceToEnemy < closestDistance)
-                {
-                    closestDistance = distanceToEnemy;
-                    closestEnemy = hit.transform;
-                }
-            }
-        }
         if (closestEnemy != null)
         {
             if (transform.position.x > closestEnemy.position.x)
+            {
+                facingDir = -1;
                 transform.Rotate(0, 180, 0);
+            }
         }
     }
 }

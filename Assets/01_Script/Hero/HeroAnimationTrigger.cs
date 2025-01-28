@@ -8,7 +8,7 @@ public class HeroAnimationTrigger : MonoBehaviour
         Collider2D[] collider2Ds = Physics2D.OverlapCircleAll(hero.attackCheck.position, hero.attackCheckRadius);
         foreach(var hit in collider2Ds) {
             if (hit.GetComponent<Enemy>() != null) {
-                hit.GetComponent<Enemy>().Damage();
+                hit.GetComponent<Enemy>().DamageImpact();
             }
         }
     }

@@ -12,7 +12,8 @@ public class Enemy_SkeletonAnimationFinishTrigger : MonoBehaviour
 
         foreach(var hit in collider2Ds) {
             if (hit.GetComponent<Player>() != null) {
-                hit.GetComponent<Player>().Damage();
+                PlayerStats _target = hit.GetComponent<PlayerStats>();
+                enemy.stats.DoDamage(_target);
             }
         }
     }

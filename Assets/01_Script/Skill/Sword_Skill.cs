@@ -16,15 +16,26 @@ public class Sword_Skill : Skill
     [SerializeField] GameObject swordPrefab;
     [SerializeField] Vector2 launchForce;
     [SerializeField] float swordGravity;
+    [SerializeField] float returnSpeed;
+
+    [SerializeField] float freezeTimeDuration = 0.7f;
 
     [Header("Bounce info")]
     [SerializeField] bool isBouncing;
     [SerializeField] int bounceAmount = 4;
+    [SerializeField] float bounceSpeed;
     [SerializeField] float bounceGravity;
+    
 
     [Header("Pierce info")]
     [SerializeField] int pierceAmount;
     [SerializeField] float pierceGravity;
+
+    [Header("Spin info")]
+    [SerializeField] float hitCooldown = .35f;
+    [SerializeField] float maxTravelDistance = 7f;
+    [SerializeField] float spinDuration = 2;
+    [SerializeField] float spinGravity = 1;
 
     Vector2 finalDir;
 
@@ -55,6 +66,9 @@ public class Sword_Skill : Skill
         {
             swordGravity = pierceGravity;
         }
+        else if (this.swordType == SwordType.Spin) {
+            swordGravity = this.spinGravity;
+        }
     }
 
     override protected void Update()
@@ -83,14 +97,17 @@ public class Sword_Skill : Skill
 
         if (this.swordType == SwordType.Bounce)
         {
-            newSwordController.SetupBounce(this.isBouncing, this.bounceAmount);
+            newSwordController.SetupBounce(this.isBouncing, this.bounceAmount, this.bounceSpeed);
         }
         else if (this.swordType == SwordType.Pierce)
         {
             newSwordController.SetupPires(this.pierceAmount);
         }
+        else if (this.swordType == SwordType.Spin) {
+            newSwordController.SetupSpin(true, maxTravelDistance, spinDuration, this.hitCooldown);
+        }
 
-        newSwordController.SetupSword(finalDir, swordGravity, player);
+        newSwordController.SetupSword(finalDir, swordGravity, player, this.freezeTimeDuration, this.returnSpeed);
 
         player.AssignTheSword(newSword);
 

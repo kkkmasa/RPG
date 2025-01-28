@@ -29,6 +29,12 @@ public class PlayerGroundedState : PlayerState
         if (Input.GetKeyDown(KeyCode.Mouse1) && HasNoSword())
             this.stateMachine.ChangeState(player.aimSwordState);
 
+        if (Input.GetKeyDown(KeyCode.R))
+            this.stateMachine.ChangeState(player.blackholeState);
+
+        if (Input.GetKeyDown(KeyCode.V))
+            this.stateMachine.ChangeState(player.counterAttackState);
+
     }
     public override void Exit()
     {
