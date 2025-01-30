@@ -17,8 +17,10 @@ public class Inventory : MonoBehaviour
     [Header("Inventory UI")]
     [SerializeField] Transform inventorySlotParent;
     [SerializeField] Transform stashSlopParent;
+    [SerializeField] Transform equipmentSlotParent;
     UI_ItemSlot[] inventoryItemSlot;
     UI_ItemSlot[] stashItemSlot;
+    UI_EquipmentSlot[] equipmentSlot;
 
     void Awake()
     {
@@ -42,25 +44,75 @@ public class Inventory : MonoBehaviour
 
         inventoryItemSlot = inventorySlotParent.GetComponentsInChildren<UI_ItemSlot>();
         this.stashItemSlot = stashSlopParent.GetComponentsInChildren<UI_ItemSlot>();
+        this.equipmentSlot = equipmentSlotParent.GetComponentsInChildren<UI_EquipmentSlot>();
     }
     void UpdateSlotUI()
     {
+        for (int i = 0; i < equipmentSlot.Length; i++) {
+            foreach(KeyValuePair<ItemData_Equipment, InventoryItem> item in equipmentDictionary) {
+                if (item.Key.equipmentType == equipmentSlot[i].slotType) {
+                    equipmentSlot[i].UpdateSlotUI(item.Value);
+                }
+            }
+        }
+        for (int i = 0; i < inventoryItemSlot.Length; i++)
+        {
+            inventoryItemSlot[i].CleanUpSlot();
+        }
+        for (int i = 0; i < stashItemSlot.Length; i++)
+        {
+            stashItemSlot[i].CleanUpSlot();
+        }
+
+
         for (int i = 0; i < inventory.Count; i++)
         {
             inventoryItemSlot[i].UpdateSlotUI(inventory[i]);
         }
-        for(int i = 0; i < stash.Count; i++) {
+        for (int i = 0; i < stash.Count; i++)
+        {
             stashItemSlot[i].UpdateSlotUI(stash[i]);
         }
     }
- 
-    public void EquipmentItem(ItemData _itemData) {
+
+    public void EquipmentItem(ItemData _itemData)
+    {
         ItemData_Equipment newItem_equipment = _itemData as ItemData_Equipment;
         InventoryItem newItem = new InventoryItem(newItem_equipment);
+
+        ItemData_Equipment oldEquipment = null;
+
+        foreach (KeyValuePair<ItemData_Equipment, InventoryItem> item in equipmentDictionary)
+        {
+            if (item.Key.equipmentType == newItem_equipment.equipmentType)
+            {
+                oldEquipment = item.Key;
+            }
+        }
+        if (oldEquipment != null)
+        {
+            Unequipment(oldEquipment);
+            AddItem(oldEquipment);
+        }
+
+
         equipment.Add(newItem);
         equipmentDictionary.Add(newItem_equipment, newItem);
 
+        RemoveItem(_itemData);
+
+        UpdateSlotUI();
     }
+
+    private void Unequipment(ItemData_Equipment itemToDelete)
+    {
+        if (equipmentDictionary.TryGetValue(itemToDelete, out InventoryItem value))
+        {
+            equipment.Remove(value);
+            equipmentDictionary.Remove(itemToDelete);
+        }
+    }
+
     public void AddItem(ItemData _itemData)
     {
         if (_itemData.itemType == ItemType.Equipment)
@@ -117,11 +169,15 @@ public class Inventory : MonoBehaviour
                 value.RemoveStack();
             }
         }
-        if (stashDictionary.TryGetValue(_itemData, out InventoryItem stashValue)) {
-            if (stashValue.stackSize <= 1) {
+        if (stashDictionary.TryGetValue(_itemData, out InventoryItem stashValue))
+        {
+            if (stashValue.stackSize <= 1)
+            {
                 stash.Remove(stashValue);
                 stashDictionary.Remove(_itemData);
-            } else {
+            }
+            else
+            {
                 stashValue.RemoveStack();
             }
         }
@@ -134,8 +190,8 @@ public class Inventory : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.P))
         {
-            // ItemData itemData = inventoryItems[inventoryItems.Count - 1].data;
-            // RemoveItem(itemData);
+            ItemData itemData = inventory[inventory.Count - 1].data;
+            RemoveItem(itemData);
         }
 
     }
